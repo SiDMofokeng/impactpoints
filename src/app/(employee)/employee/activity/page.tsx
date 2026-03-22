@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { collection, getDocs } from "firebase/firestore"
 import { Clock3, History, QrCode, ScanLine } from "lucide-react"
-
 import RequireRole from "@/components/auth/require-role"
 import SurfaceCard from "@/components/shared/surface-card"
 import { useUserProfile } from "@/components/providers/user-profile-provider"
@@ -31,7 +30,6 @@ type ActivityScanRecord = {
 
 export default function EmployeeActivityPage() {
     const { profile, loading: profileLoading } = useUserProfile()
-
     const [scans, setScans] = useState<ActivityScanRecord[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -50,13 +48,14 @@ export default function EmployeeActivityPage() {
 
             const rows: ActivityScanRecord[] = scansSnap.docs
                 .map((docSnap) => {
-                    const data = docSnap.data() as Partial<ActivityScanRecord>
+                    const data = docSnap.data() as Record<string, unknown>
 
                     return {
                         id: docSnap.id,
-                        activityId: data.activityId ?? "",
-                        activityCode: data.activityCode ?? "",
-                        activityTitle: data.activityTitle ?? "",
+                        activityId: typeof data.activityId === "string" ? data.activityId : "",
+                        activityCode: typeof data.activityCode === "string" ? data.activityCode : "",
+                        activityTitle:
+                            typeof data.activityTitle === "string" ? data.activityTitle : "",
                         activityType:
                             data.activityType === "check_in" ||
                                 data.activityType === "check_out" ||
@@ -65,14 +64,20 @@ export default function EmployeeActivityPage() {
                                 data.activityType === "general"
                                 ? data.activityType
                                 : "",
-                        notes: data.notes ?? "",
+                        notes: typeof data.notes === "string" ? data.notes : "",
                         pointsAwarded:
                             typeof data.pointsAwarded === "number" ? data.pointsAwarded : 0,
-                        scannedAt: data.scannedAt ?? null,
-                        source: data.source ?? "",
-                        userEmail: data.userEmail ?? "",
-                        userId: data.userId ?? "",
-                        userName: data.userName ?? "",
+                        scannedAt:
+                            typeof data.scannedAt === "object" && data.scannedAt !== null
+                                ? (data.scannedAt as {
+                                    seconds?: number
+                                    nanoseconds?: number
+                                })
+                                : null,
+                        source: typeof data.source === "string" ? data.source : "",
+                        userEmail: typeof data.userEmail === "string" ? data.userEmail : "",
+                        userId: typeof data.userId === "string" ? data.userId : "",
+                        userName: typeof data.userName === "string" ? data.userName : "",
                     }
                 })
                 .filter((scan) => scan.userEmail.toLowerCase() === normalizedEmail)
@@ -267,11 +272,9 @@ function formatScanDate(
     } | null
 ) {
     const seconds = scannedAt?.seconds
-
     if (!seconds) return "Unknown date"
 
     const date = new Date(seconds * 1000)
-
     return date.toLocaleString()
 }
 
