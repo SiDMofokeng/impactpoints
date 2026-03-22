@@ -1,0 +1,137 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+:root {
+    --background: #f5f8ff;
+    --foreground: #0f172a;
+
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+
+    --popover: #ffffff;
+    --popover-foreground: #0f172a;
+
+    --primary: #2563eb;
+    --primary-foreground: #ffffff;
+
+    --secondary: #eaf2ff;
+    --secondary-foreground: #0f172a;
+
+    --accent: #84cc16;
+    --accent-foreground: #0f172a;
+
+    --muted: #eef4ff;
+    --muted-foreground: #64748b;
+
+    --surface: #f8fbff;
+    --surface-foreground: #0f172a;
+
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+
+    --border: #dbe7f5;
+    --input: #dbe7f5;
+    --ring: #2563eb;
+
+    --radius: 1.25rem;
+    --radius-card: 1.5rem;
+    --radius-button: 1rem;
+    --radius-input: 1rem;
+
+    --shadow-soft: 0 8px 30px rgba(37, 99, 235, 0.08);
+    --shadow-card: 0 14px 40px rgba(15, 23, 42, 0.08);
+
+    --font-sans: Inter, Arial, Helvetica, sans-serif;
+}
+
+.dark {
+    --background: #0b1220;
+    --foreground: #f8fafc;
+
+    --card: #111827;
+    --card-foreground: #f8fafc;
+
+    --popover: #111827;
+    --popover-foreground: #f8fafc;
+
+    --primary: #3b82f6;
+    --primary-foreground: #ffffff;
+
+    --secondary: #172033;
+    --secondary-foreground: #f8fafc;
+
+    --accent: #84cc16;
+    --accent-foreground: #0b1220;
+
+    --muted: #172033;
+    --muted-foreground: #94a3b8;
+
+    --surface: #0f172a;
+    --surface-foreground: #f8fafc;
+
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+
+    --border: rgba(255, 255, 255, 0.1);
+    --input: rgba(255, 255, 255, 0.12);
+    --ring: #3b82f6;
+}
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --radius-sm: calc(var(--radius) - 6px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 6px);
+}
+
+* {
+    box-sizing: border-box;
+    border-color: var(--border);
+}
+
+html {
+    font-family: var(--font-sans);
+}
+
+body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
