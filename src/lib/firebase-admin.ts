@@ -6,19 +6,28 @@ const projectId = process.env.FIREBASE_PROJECT_ID
 const clientEmail = process.env.FIREBASE_CLIENT_EMAIL
 const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n")
 
-const app =
+if (!projectId) {
+    throw new Error("Missing FIREBASE_PROJECT_ID")
+}
+
+if (!clientEmail) {
+    throw new Error("Missing FIREBASE_CLIENT_EMAIL")
+}
+
+if (!privateKey) {
+    throw new Error("Missing FIREBASE_PRIVATE_KEY")
+}
+
+const adminApp =
     getApps().length > 0
         ? getApps()[0]
         : initializeApp({
-            credential:
-                projectId && clientEmail && privateKey
-                    ? cert({
-                        projectId,
-                        clientEmail,
-                        privateKey,
-                    })
-                    : undefined,
+            credential: cert({
+                projectId,
+                clientEmail,
+                privateKey,
+            }),
         })
 
-export const adminAuth = getAuth(app)
-export const adminDb = getFirestore(app)
+export const adminAuth = getAuth(adminApp)
+export const adminDb = getFirestore(adminApp)
