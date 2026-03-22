@@ -94,32 +94,38 @@ export default function EmployeeOverviewPage() {
 
             const normalizedEmail = (profile?.email ?? "").toLowerCase()
 
-            const currentUser =
+            const currentUser: WorkspaceUser | null =
                 usersSnap.docs
-                    .map((docSnap) => {
-                        const data = docSnap.data() as Partial<WorkspaceUser>
+                    .map((docSnap): WorkspaceUser => {
+                        const data = docSnap.data() as Record<string, unknown>
+
+                        const role: WorkspaceUser["role"] =
+                            data.role === "super_admin" ||
+                                data.role === "department_head" ||
+                                data.role === "employee"
+                                ? data.role
+                                : ""
+
+                        const status: WorkspaceUser["status"] =
+                            data.status === "active" ||
+                                data.status === "inactive" ||
+                                data.status === "suspended"
+                                ? data.status
+                                : ""
 
                         return {
                             id: docSnap.id,
-                            name: data.name ?? "",
-                            email: data.email ?? "",
-                            role:
-                                data.role === "super_admin" ||
-                                    data.role === "department_head" ||
-                                    data.role === "employee"
-                                    ? data.role
-                                    : "",
-                            departmentId: data.departmentId ?? "",
-                            departmentName: data.departmentName ?? "",
-                            status:
-                                data.status === "active" ||
-                                    data.status === "inactive" ||
-                                    data.status === "suspended"
-                                    ? data.status
-                                    : "",
+                            name: typeof data.name === "string" ? data.name : "",
+                            email: typeof data.email === "string" ? data.email : "",
+                            role,
+                            departmentId:
+                                typeof data.departmentId === "string" ? data.departmentId : "",
+                            departmentName:
+                                typeof data.departmentName === "string" ? data.departmentName : "",
+                            status,
                             totalPoints:
                                 typeof data.totalPoints === "number" ? data.totalPoints : 0,
-                            isDeleted: data.isDeleted ?? false,
+                            isDeleted: typeof data.isDeleted === "boolean" ? data.isDeleted : false,
                         }
                     })
                     .find(
