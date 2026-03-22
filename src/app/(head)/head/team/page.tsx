@@ -2,7 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { collection, getDocs } from "firebase/firestore"
-import { Eye, Search, ShieldAlert, UserCheck, UserCog, Users } from "lucide-react"
+import {
+    Building2,
+    Eye,
+    Search,
+    ShieldAlert,
+    Sparkles,
+    UserCheck,
+    UserCog,
+    Users,
+} from "lucide-react"
 
 import RequireRole from "@/components/auth/require-role"
 import SurfaceCard from "@/components/shared/surface-card"
@@ -135,7 +144,9 @@ export default function HeadTeamPage() {
             })
 
             setDepartments(
-                departmentRows.filter((department) => !department.isDeleted && department.isActive)
+                departmentRows.filter(
+                    (department) => !department.isDeleted && department.isActive
+                )
             )
             setUsers(userRows.filter((user) => !user.isDeleted))
         } catch (error) {
@@ -197,9 +208,24 @@ export default function HeadTeamPage() {
     return (
         <RequireRole allowedRoles={["department_head"]}>
             <div className="space-y-6">
+                <section className="rounded-[var(--radius-card)] border bg-gradient-to-r from-blue-600 via-sky-500 to-lime-500 px-6 py-8 text-white shadow-[var(--shadow-card)] md:px-8">
+                    <div className="max-w-3xl space-y-3">
+                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/80">
+                            Department team
+                        </p>
+                        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+                            Team Members & Performance
+                        </h1>
+                        <p className="max-w-2xl text-sm leading-6 text-white/90 md:text-base">
+                            View the employees in your department, monitor their status,
+                            and keep track of the points your team is building over time.
+                        </p>
+                    </div>
+                </section>
+
                 <section className="space-y-2">
                     <p className="text-sm font-medium text-muted-foreground">Team</p>
-                    <h1 className="text-3xl font-bold tracking-tight">Department Team</h1>
+                    <h2 className="text-3xl font-bold tracking-tight">Department Team</h2>
                     <p className="max-w-3xl text-sm text-muted-foreground md:text-base">
                         View the employees assigned to your department, their account status,
                         and their total points.
@@ -235,7 +261,7 @@ export default function HeadTeamPage() {
                         helper="Suspended employee accounts"
                     />
                     <StatCard
-                        icon={<Users className="h-5 w-5" />}
+                        icon={<Sparkles className="h-5 w-5" />}
                         label="Team points"
                         value={String(stats.totalPoints)}
                         helper="Combined employee points"
@@ -326,8 +352,9 @@ export default function HeadTeamPage() {
                                             </td>
 
                                             <td className="px-5 py-4">
-                                                <div className="text-sm">
-                                                    {user.departmentName || "Not assigned"}
+                                                <div className="flex items-center gap-2 text-sm">
+                                                    <Building2 className="h-4 w-4 text-muted-foreground" />
+                                                    <span>{user.departmentName || "Not assigned"}</span>
                                                 </div>
                                             </td>
 
@@ -350,15 +377,12 @@ export default function HeadTeamPage() {
 
                                             <td className="px-5 py-4 md:px-6">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleOpenView(user)}
-                                                        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-blue-200 bg-blue-50 text-blue-700 transition hover:bg-blue-100"
+                                                    <ActionIconButton
+                                                        label="View employee"
                                                         title="View employee"
-                                                        aria-label="View employee"
-                                                    >
-                                                        <Eye className="h-4 w-4" />
-                                                    </button>
+                                                        onClick={() => handleOpenView(user)}
+                                                        icon={<Eye className="h-4 w-4" />}
+                                                    />
                                                 </div>
                                             </td>
                                         </tr>
@@ -485,6 +509,30 @@ function BadgeText({
         >
             {text}
         </span>
+    )
+}
+
+function ActionIconButton({
+    label,
+    title,
+    onClick,
+    icon,
+}: {
+    label: string
+    title: string
+    onClick: () => void
+    icon: React.ReactNode
+}) {
+    return (
+        <button
+            type="button"
+            aria-label={label}
+            title={title}
+            onClick={onClick}
+            className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-blue-200 bg-blue-50 text-blue-700 transition hover:border-blue-300 hover:bg-blue-100"
+        >
+            {icon}
+        </button>
     )
 }
 

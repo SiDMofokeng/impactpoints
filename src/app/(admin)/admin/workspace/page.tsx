@@ -13,6 +13,7 @@ import {
     Building2,
     KeyRound,
     Pencil,
+    Plus,
     Power,
     Search,
     Shield,
@@ -478,7 +479,6 @@ export default function AdminWorkspacePage() {
         const confirmed = window.confirm(
             `Delete ${user.name || user.email}? This will hide the user from the workspace list.`
         )
-
         if (!confirmed) return
 
         setActionMessage("")
@@ -505,14 +505,29 @@ export default function AdminWorkspacePage() {
     return (
         <RequireRole allowedRoles={["super_admin"]}>
             <div className="space-y-6">
+                <section className="rounded-[var(--radius-card)] border bg-gradient-to-r from-blue-600 via-sky-500 to-lime-500 px-6 py-8 text-white shadow-[var(--shadow-card)] md:px-8">
+                    <div className="max-w-3xl space-y-3">
+                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/80">
+                            Workspace management
+                        </p>
+                        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+                            People & Assignments
+                        </h1>
+                        <p className="max-w-2xl text-sm leading-6 text-white/90 md:text-base">
+                            Manage users, roles, departments, account access, and user lifecycle
+                            actions from one central workspace.
+                        </p>
+                    </div>
+                </section>
+
                 <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                     <div className="space-y-2">
                         <p className="text-sm font-medium text-muted-foreground">
                             Workspace
                         </p>
-                        <h1 className="text-3xl font-bold tracking-tight">
+                        <h2 className="text-3xl font-bold tracking-tight">
                             People & Assignments
-                        </h1>
+                        </h2>
                         <p className="max-w-3xl text-sm text-muted-foreground md:text-base">
                             Manage users, assign departments, define roles, and control how
                             each person accesses the system.
@@ -522,19 +537,21 @@ export default function AdminWorkspacePage() {
                     <button
                         type="button"
                         onClick={() => setCreateOpen(true)}
-                        className="inline-flex cursor-pointer items-center justify-center rounded-[var(--radius-button)] bg-[var(--primary)] px-5 py-3 text-sm font-medium text-white transition hover:opacity-90"
+                        className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-button)] bg-[var(--primary)] px-5 py-3 text-sm font-medium text-white transition hover:opacity-90"
                     >
+                        <Plus className="h-4 w-4" />
                         Create user
                     </button>
                 </section>
 
-                {(actionError || actionMessage) ? (
+                {actionError || actionMessage ? (
                     <div className="space-y-3">
                         {actionError ? (
                             <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                                 {actionError}
                             </div>
                         ) : null}
+
                         {actionMessage ? (
                             <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
                                 {actionMessage}
@@ -866,7 +883,9 @@ export default function AdminWorkspacePage() {
                                         className="h-11 w-full cursor-pointer rounded-[var(--radius-input)] border bg-white px-4 text-sm outline-none disabled:cursor-not-allowed disabled:bg-slate-100"
                                     >
                                         <option value="">
-                                            {departmentRequired ? "Select a department" : "No department required"}
+                                            {departmentRequired
+                                                ? "Select a department"
+                                                : "No department required"}
                                         </option>
                                         {departments.map((department) => (
                                             <option key={department.id} value={department.id}>
@@ -874,7 +893,6 @@ export default function AdminWorkspacePage() {
                                             </option>
                                         ))}
                                     </select>
-
                                     <p className="text-xs leading-5 text-muted-foreground">
                                         Super Admins can exist without a department. Department Heads and Employees must be assigned to one.
                                     </p>
@@ -882,7 +900,6 @@ export default function AdminWorkspacePage() {
 
                                 <div className="rounded-[var(--radius-card)] border bg-[var(--surface)] p-4">
                                     <p className="text-sm font-semibold">Access summary</p>
-
                                     <div className="mt-3 grid gap-2 text-sm text-muted-foreground">
                                         <div className="flex items-center justify-between gap-4">
                                             <span>Role</span>
@@ -890,14 +907,12 @@ export default function AdminWorkspacePage() {
                                                 {formatRole(createRole)}
                                             </span>
                                         </div>
-
                                         <div className="flex items-center justify-between gap-4">
                                             <span>Status</span>
                                             <span className="font-medium text-foreground">
                                                 {formatStatus(createStatus)}
                                             </span>
                                         </div>
-
                                         <div className="flex items-center justify-between gap-4">
                                             <span>Department</span>
                                             <span className="text-right font-medium text-foreground">
@@ -1020,7 +1035,9 @@ export default function AdminWorkspacePage() {
                                         className="h-11 w-full cursor-pointer rounded-[var(--radius-input)] border bg-white px-4 text-sm outline-none disabled:cursor-not-allowed disabled:bg-slate-100"
                                     >
                                         <option value="">
-                                            {editRole === "super_admin" ? "No department required" : "Select a department"}
+                                            {editRole === "super_admin"
+                                                ? "No department required"
+                                                : "Select a department"}
                                         </option>
                                         {departments.map((department) => (
                                             <option key={department.id} value={department.id}>

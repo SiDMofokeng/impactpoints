@@ -8,6 +8,8 @@ import {
     ArrowUpRight,
     Building2,
     Copy,
+    LayoutGrid,
+    List,
     QrCode,
     ScanLine,
     Search,
@@ -75,6 +77,7 @@ export default function EmployeeScanPage() {
     const [departments, setDepartments] = useState<DepartmentRecord[]>([])
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState("")
+    const [viewMode, setViewMode] = useState<"table" | "cards">("table")
 
     const [qrOpen, setQrOpen] = useState(false)
     const [selectedActivity, setSelectedActivity] = useState<ActivityRecord | null>(null)
@@ -82,6 +85,7 @@ export default function EmployeeScanPage() {
 
     useEffect(() => {
         if (authLoading) return
+
         if (!user) {
             setLoading(false)
             return
@@ -199,7 +203,6 @@ export default function EmployeeScanPage() {
     const activeDepartment = useMemo(() => {
         const departmentId = employee?.departmentId ?? ""
         if (!departmentId) return null
-
         return departments.find((department) => department.id === departmentId) ?? null
     }, [departments, employee?.departmentId])
 
@@ -225,7 +228,6 @@ export default function EmployeeScanPage() {
             })
             .filter((activity) => {
                 const term = search.trim().toLowerCase()
-
                 if (!term) return true
 
                 return (
@@ -279,13 +281,6 @@ export default function EmployeeScanPage() {
     return (
         <RequireRole allowedRoles={["employee"]}>
             <div className="space-y-6">
-                <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Scan</p>
-                    <h1 className="text-3xl font-bold tracking-tight">Available Activities</h1>
-                    <p className="text-muted-foreground">
-                        Open an available activity or display its QR code for scanning.
-                    </p>
-                </div>
 
                 <section className="rounded-[var(--radius-card)] border bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 px-6 py-8 text-white shadow-[var(--shadow-card)] md:px-8">
                     <div className="max-w-3xl space-y-3">
@@ -324,7 +319,7 @@ export default function EmployeeScanPage() {
                 </div>
 
                 <SurfaceCard className="p-5 md:p-6">
-                    <div className="grid gap-4 xl:grid-cols-[1.3fr_0.7fr]">
+                    <div className="grid gap-4 xl:grid-cols-[1.3fr_0.9fr_auto]">
                         <div className="space-y-2">
                             <label className="text-sm font-medium">Search activities</label>
                             <div className="flex items-center gap-2 rounded-[var(--radius-input)] border bg-white px-3">
@@ -342,6 +337,34 @@ export default function EmployeeScanPage() {
                             <label className="text-sm font-medium">Scan access</label>
                             <div className="flex h-11 items-center rounded-[var(--radius-input)] border bg-white px-4 text-sm text-muted-foreground">
                                 Activities are filtered by your department automatically
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">View</label>
+                            <div className="flex h-11 items-center rounded-[var(--radius-input)] border bg-white p-1">
+                                <button
+                                    type="button"
+                                    onClick={() => setViewMode("table")}
+                                    className={`inline-flex h-full cursor-pointer items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium transition ${viewMode === "table"
+                                        ? "bg-[var(--primary)] text-white"
+                                        : "text-slate-600 hover:bg-slate-100"
+                                        }`}
+                                >
+                                    <List className="h-4 w-4" />
+                                    Table
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setViewMode("cards")}
+                                    className={`inline-flex h-full cursor-pointer items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium transition ${viewMode === "cards"
+                                        ? "bg-[var(--primary)] text-white"
+                                        : "text-slate-600 hover:bg-slate-100"
+                                        }`}
+                                >
+                                    <LayoutGrid className="h-4 w-4" />
+                                    Cards
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -363,7 +386,7 @@ export default function EmployeeScanPage() {
                         <div className="px-5 py-10 text-sm text-muted-foreground md:px-6">
                             No active activities are currently available for your department.
                         </div>
-                    ) : (
+                    ) : viewMode === "table" ? (
                         <div className="overflow-x-auto">
                             <table className="min-w-full text-left">
                                 <thead className="bg-[var(--surface)]">
@@ -434,6 +457,16 @@ export default function EmployeeScanPage() {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+                    ) : (
+                        <div className="grid gap-4 p-5 md:grid-cols-2 md:p-6 xl:grid-cols-3">
+                            {availableActivities.map((activity) => (
+                                <ActivityCard
+                                    key={activity.id}
+                                    activity={activity}
+                                    onOpenQr={() => handleOpenQr(activity)}
+                                />
+                            ))}
                         </div>
                     )}
                 </SurfaceCard>
@@ -506,6 +539,85 @@ export default function EmployeeScanPage() {
                 </Dialog>
             </div>
         </RequireRole>
+    )
+}
+
+function ActivityCard({
+    activity,
+    onOpenQr,
+}: {
+    activity: ActivityRecord
+    onOpenQr: () => void
+}) {
+    return (
+        <div className="overflow-hidden rounded-[var(--radius-card)] border bg-white shadow-sm transition hover:shadow-md">
+            <div className="flex aspect-[16/10] items-center justify-center border-b bg-[linear-gradient(135deg,#eff6ff_0%,#dbeafe_50%,#cffafe_100%)]">
+                <QRCodeSVG value={`/scan/${activity.id}`} size={120} />
+            </div>
+
+            <div className="space-y-4 p-5">
+                <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-base font-semibold">
+                            {activity.title || "Untitled activity"}
+                        </p>
+                        <span className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
+                            {formatActivityType(activity.type)}
+                        </span>
+                    </div>
+
+                    <p className="mt-2 text-sm text-muted-foreground">
+                        {activity.description || "No description"}
+                    </p>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                    <InfoTile label="Code" value={activity.code || "No code"} />
+                    <InfoTile label="Points" value={String(activity.points)} />
+                    <InfoTile label="Access" value="Allowed" />
+                    <InfoTile
+                        label="Email verification"
+                        value={activity.requiresEmail ? "Required" : "Not required"}
+                    />
+                </div>
+
+                <div className="flex flex-col gap-2 sm:flex-row">
+                    <button
+                        type="button"
+                        onClick={onOpenQr}
+                        className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-button)] border border-violet-200 bg-violet-50 px-4 py-2.5 text-sm font-medium text-violet-700 transition hover:bg-violet-100"
+                    >
+                        <QrCode className="h-4 w-4" />
+                        QR code
+                    </button>
+
+                    <Link
+                        href={`/scan/${activity.id}`}
+                        className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-button)] bg-[var(--primary)] px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
+                    >
+                        Open scan
+                        <ArrowUpRight className="h-4 w-4" />
+                    </Link>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function InfoTile({
+    label,
+    value,
+}: {
+    label: string
+    value: string
+}) {
+    return (
+        <div className="rounded-[var(--radius-input)] border bg-[var(--surface)] px-4 py-3">
+            <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                {label}
+            </p>
+            <p className="mt-2 text-sm font-semibold">{value}</p>
+        </div>
     )
 }
 

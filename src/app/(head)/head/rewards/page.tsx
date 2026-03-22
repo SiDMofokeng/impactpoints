@@ -13,6 +13,8 @@ import {
 } from "firebase/firestore"
 import {
     Gift,
+    LayoutGrid,
+    List,
     Pencil,
     Plus,
     Power,
@@ -89,6 +91,7 @@ export default function HeadRewardsPage() {
     const [search, setSearch] = useState("")
     const [typeFilter, setTypeFilter] = useState<RewardType | "all">("all")
     const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all")
+    const [viewMode, setViewMode] = useState<"table" | "cards">("table")
 
     const [createOpen, setCreateOpen] = useState(false)
     const [createTitle, setCreateTitle] = useState("")
@@ -142,8 +145,10 @@ export default function HeadRewardsPage() {
             ])
 
             const departmentDoc = departmentsSnap.docs[0]
+
             if (departmentDoc) {
                 const departmentData = departmentDoc.data() as Partial<DepartmentRecord>
+
                 setDepartment({
                     id: departmentDoc.id,
                     name: departmentData.name ?? "",
@@ -417,10 +422,26 @@ export default function HeadRewardsPage() {
     return (
         <RequireRole allowedRoles={["department_head"]}>
             <div className="space-y-6">
+                <section className="rounded-[var(--radius-card)] bg-[linear-gradient(135deg,#2563eb_0%,#1d4ed8_48%,#84cc16_100%)] px-6 py-7 text-white shadow-[var(--shadow-card)]">
+                    <div className="max-w-3xl space-y-3">
+                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-white/80">
+                            Department rewards
+                        </p>
+                        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+                            Reward Catalog
+                        </h1>
+                        <p className="max-w-2xl text-sm text-white/85 md:text-base">
+                            Create and manage department rewards for{" "}
+                            {department?.name || "your team"}, including point thresholds,
+                            stock limits, and reward availability.
+                        </p>
+                    </div>
+                </section>
+
                 <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                     <div className="space-y-2">
                         <p className="text-sm font-medium text-muted-foreground">Rewards</p>
-                        <h1 className="text-3xl font-bold tracking-tight">Department Rewards</h1>
+                        <h2 className="text-3xl font-bold tracking-tight">Department Rewards</h2>
                         <p className="max-w-3xl text-sm text-muted-foreground md:text-base">
                             Create and manage rewards for {department?.name || "your department"}.
                         </p>
@@ -477,7 +498,7 @@ export default function HeadRewardsPage() {
                 </section>
 
                 <SurfaceCard className="p-5 md:p-6">
-                    <div className="grid gap-4 xl:grid-cols-[1.4fr_0.8fr_0.8fr]">
+                    <div className="grid gap-4 xl:grid-cols-[1.4fr_0.8fr_0.8fr_auto]">
                         <div className="space-y-2">
                             <label className="text-sm font-medium">Search</label>
                             <div className="flex items-center gap-2 rounded-[var(--radius-input)] border bg-white px-3">
@@ -520,6 +541,34 @@ export default function HeadRewardsPage() {
                                 <option value="inactive">Inactive only</option>
                             </select>
                         </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">View</label>
+                            <div className="flex h-11 items-center rounded-[var(--radius-input)] border bg-white p-1">
+                                <button
+                                    type="button"
+                                    onClick={() => setViewMode("table")}
+                                    className={`inline-flex h-full cursor-pointer items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium transition ${viewMode === "table"
+                                            ? "bg-[var(--primary)] text-white"
+                                            : "text-slate-600 hover:bg-slate-100"
+                                        }`}
+                                >
+                                    <List className="h-4 w-4" />
+                                    Table
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setViewMode("cards")}
+                                    className={`inline-flex h-full cursor-pointer items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium transition ${viewMode === "cards"
+                                            ? "bg-[var(--primary)] text-white"
+                                            : "text-slate-600 hover:bg-slate-100"
+                                        }`}
+                                >
+                                    <LayoutGrid className="h-4 w-4" />
+                                    Cards
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </SurfaceCard>
 
@@ -539,7 +588,7 @@ export default function HeadRewardsPage() {
                         <div className="px-5 py-10 text-sm text-muted-foreground md:px-6">
                             No rewards found yet.
                         </div>
-                    ) : (
+                    ) : viewMode === "table" ? (
                         <div className="overflow-x-auto">
                             <table className="min-w-full text-left">
                                 <thead className="bg-[var(--surface)]">
@@ -595,7 +644,11 @@ export default function HeadRewardsPage() {
                                                         tone="blue"
                                                     />
                                                     <ActionIconButton
-                                                        label={reward.isActive ? "Deactivate reward" : "Activate reward"}
+                                                        label={
+                                                            reward.isActive
+                                                                ? "Deactivate reward"
+                                                                : "Activate reward"
+                                                        }
                                                         title={reward.isActive ? "Deactivate" : "Activate"}
                                                         onClick={() => handleToggleRewardStatus(reward)}
                                                         icon={<Power className="h-4 w-4" />}
@@ -607,6 +660,17 @@ export default function HeadRewardsPage() {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+                    ) : (
+                        <div className="grid gap-4 p-5 md:grid-cols-2 md:p-6 xl:grid-cols-3">
+                            {filteredRewards.map((reward) => (
+                                <RewardCard
+                                    key={reward.id}
+                                    reward={reward}
+                                    onEdit={() => handleOpenEdit(reward)}
+                                    onToggle={() => handleToggleRewardStatus(reward)}
+                                />
+                            ))}
                         </div>
                     )}
                 </SurfaceCard>
@@ -960,6 +1024,95 @@ export default function HeadRewardsPage() {
                 </Dialog>
             </div>
         </RequireRole>
+    )
+}
+
+function RewardCard({
+    reward,
+    onEdit,
+    onToggle,
+}: {
+    reward: RewardRecord
+    onEdit: () => void
+    onToggle: () => void
+}) {
+    return (
+        <div className="overflow-hidden rounded-[var(--radius-card)] border bg-white shadow-sm transition hover:shadow-md">
+            <div className="flex aspect-[16/10] items-center justify-center border-b bg-[linear-gradient(135deg,#eff6ff_0%,#dbeafe_48%,#ecfccb_100%)]">
+                <div className="flex h-20 w-20 items-center justify-center rounded-3xl border border-white/70 bg-white/90 shadow-sm">
+                    <Gift className="h-10 w-10 text-[var(--primary)]" />
+                </div>
+            </div>
+
+            <div className="space-y-4 p-5">
+                <div className="space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-base font-semibold">
+                            {reward.title || "Untitled reward"}
+                        </p>
+                        <RewardTypeBadge type={reward.type} />
+                    </div>
+
+                    <p className="text-sm text-muted-foreground">
+                        {reward.description || "No description"}
+                    </p>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                    <InfoTile label="Points required" value={String(reward.pointsRequired)} />
+                    <InfoTile
+                        label="Stock"
+                        value={reward.stock === 0 ? "Unlimited" : String(reward.stock)}
+                    />
+                    <InfoTile
+                        label="Status"
+                        value={reward.isActive ? "Active" : "Inactive"}
+                    />
+                    <InfoTile
+                        label="Approval"
+                        value={reward.approvalMode === "auto" ? "Auto" : reward.approvalMode || "Auto"}
+                    />
+                </div>
+
+                <div className="flex items-center justify-between gap-3 pt-1">
+                    <StatusBadge active={reward.isActive} />
+
+                    <div className="flex items-center gap-2">
+                        <ActionIconButton
+                            label="Edit reward"
+                            title="Edit"
+                            onClick={onEdit}
+                            icon={<Pencil className="h-4 w-4" />}
+                            tone="blue"
+                        />
+                        <ActionIconButton
+                            label={reward.isActive ? "Deactivate reward" : "Activate reward"}
+                            title={reward.isActive ? "Deactivate" : "Activate"}
+                            onClick={onToggle}
+                            icon={<Power className="h-4 w-4" />}
+                            tone={reward.isActive ? "red" : "green"}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function InfoTile({
+    label,
+    value,
+}: {
+    label: string
+    value: string
+}) {
+    return (
+        <div className="rounded-[var(--radius-input)] border bg-[var(--surface)] px-4 py-3">
+            <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                {label}
+            </p>
+            <p className="mt-2 text-sm font-semibold">{value}</p>
+        </div>
     )
 }
 

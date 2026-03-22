@@ -16,6 +16,8 @@ import {
     CheckCircle2,
     ClipboardCheck,
     Copy,
+    LayoutGrid,
+    List,
     Pencil,
     Plus,
     Power,
@@ -82,6 +84,7 @@ export default function HeadActivitiesPage() {
     const [search, setSearch] = useState("")
     const [typeFilter, setTypeFilter] = useState<ActivityType | "all">("all")
     const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all")
+    const [viewMode, setViewMode] = useState<"table" | "cards">("table")
 
     const [createOpen, setCreateOpen] = useState(false)
     const [createTitle, setCreateTitle] = useState("")
@@ -139,8 +142,10 @@ export default function HeadActivitiesPage() {
             ])
 
             const departmentDoc = departmentsSnap.docs[0]
+
             if (departmentDoc) {
                 const departmentData = departmentDoc.data() as Partial<DepartmentRecord>
+
                 setDepartment({
                     id: departmentDoc.id,
                     name: departmentData.name ?? "",
@@ -227,6 +232,11 @@ export default function HeadActivitiesPage() {
         if (typeof window === "undefined") return `/scan/${qrActivity.id}`
         return `${window.location.origin}/scan/${qrActivity.id}`
     }, [qrActivity])
+
+    function getActivityScanUrl(activityId: string) {
+        if (typeof window === "undefined") return `/scan/${activityId}`
+        return `${window.location.origin}/scan/${activityId}`
+    }
 
     function resetCreateForm() {
         setCreateTitle("")
@@ -417,25 +427,32 @@ export default function HeadActivitiesPage() {
     return (
         <RequireRole allowedRoles={["department_head"]}>
             <div className="space-y-6">
-                <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                    <div className="space-y-2">
-                        <p className="text-sm font-medium text-muted-foreground">Activities</p>
-                        <h1 className="text-3xl font-bold tracking-tight">Department Activities</h1>
-                        <p className="max-w-3xl text-sm text-muted-foreground md:text-base">
-                            Create and manage QR-based activities for{" "}
-                            {department?.name || "your department"}.
-                        </p>
-                    </div>
+                <section className="rounded-[var(--radius-card)] bg-[linear-gradient(135deg,#2563eb_0%,#1d4ed8_48%,#84cc16_100%)] px-6 py-7 text-white shadow-[var(--shadow-card)]">
+                    <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                        <div className="max-w-3xl space-y-3">
+                            <p className="text-xs font-medium uppercase tracking-[0.18em] text-white/80">
+                                Department activities
+                            </p>
+                            <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+                                QR Activity Management
+                            </h1>
+                            <p className="max-w-2xl text-sm text-white/85 md:text-base">
+                                Create and manage QR-based activities for{" "}
+                                {department?.name || "your department"}, track active scans,
+                                and keep point-awarding actions organized.
+                            </p>
+                        </div>
 
-                    <button
-                        type="button"
-                        onClick={() => setCreateOpen(true)}
-                        disabled={!departmentId}
-                        className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-button)] bg-[var(--primary)] px-5 py-3 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                        <Plus className="h-4 w-4" />
-                        Create activity
-                    </button>
+                        <button
+                            type="button"
+                            onClick={() => setCreateOpen(true)}
+                            disabled={!departmentId}
+                            className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-button)] bg-white px-5 py-3 text-sm font-medium text-[var(--primary)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            <Plus className="h-4 w-4" />
+                            Create activity
+                        </button>
+                    </div>
                 </section>
 
                 {!departmentId ? (
@@ -478,7 +495,7 @@ export default function HeadActivitiesPage() {
                 </section>
 
                 <SurfaceCard className="p-5 md:p-6">
-                    <div className="grid gap-4 xl:grid-cols-[1.4fr_0.8fr_0.8fr]">
+                    <div className="grid gap-4 xl:grid-cols-[1.4fr_0.8fr_0.8fr_auto]">
                         <div className="space-y-2">
                             <label className="text-sm font-medium">Search</label>
                             <div className="flex items-center gap-2 rounded-[var(--radius-input)] border bg-white px-3">
@@ -521,6 +538,35 @@ export default function HeadActivitiesPage() {
                                 <option value="inactive">Inactive only</option>
                             </select>
                         </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">View</label>
+                            <div className="flex h-11 items-center rounded-[var(--radius-input)] border bg-white p-1">
+                                <button
+                                    type="button"
+                                    onClick={() => setViewMode("table")}
+                                    className={`inline-flex h-full cursor-pointer items-center gap-2 rounded-[10px] px-3 text-sm font-medium transition ${viewMode === "table"
+                                            ? "bg-[var(--primary)] text-white"
+                                            : "text-slate-700 hover:bg-slate-100"
+                                        }`}
+                                >
+                                    <List className="h-4 w-4" />
+                                    Table
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setViewMode("cards")}
+                                    className={`inline-flex h-full cursor-pointer items-center gap-2 rounded-[10px] px-3 text-sm font-medium transition ${viewMode === "cards"
+                                            ? "bg-[var(--primary)] text-white"
+                                            : "text-slate-700 hover:bg-slate-100"
+                                        }`}
+                                >
+                                    <LayoutGrid className="h-4 w-4" />
+                                    Cards
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </SurfaceCard>
 
@@ -540,7 +586,7 @@ export default function HeadActivitiesPage() {
                         <div className="px-5 py-10 text-sm text-muted-foreground md:px-6">
                             No activities found yet.
                         </div>
-                    ) : (
+                    ) : viewMode === "table" ? (
                         <div className="overflow-x-auto">
                             <table className="min-w-full text-left">
                                 <thead className="bg-[var(--surface)]">
@@ -622,6 +668,97 @@ export default function HeadActivitiesPage() {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+                    ) : (
+                        <div className="grid gap-4 p-5 md:grid-cols-2 md:p-6 xl:grid-cols-3">
+                            {filteredActivities.map((activity) => {
+                                const activityUrl = getActivityScanUrl(activity.id)
+
+                                return (
+                                    <div
+                                        key={activity.id}
+                                        className="overflow-hidden rounded-[var(--radius-card)] border bg-white shadow-sm"
+                                    >
+                                        <div className="flex items-center justify-center border-b bg-[var(--surface)] p-5">
+                                            <QRCodeSVG value={activityUrl} size={180} />
+                                        </div>
+
+                                        <div className="space-y-4 p-5">
+                                            <div className="space-y-1">
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    <p className="text-base font-semibold">
+                                                        {activity.title || "Untitled activity"}
+                                                    </p>
+                                                    <ActivityTypeBadge type={activity.type} />
+                                                </div>
+
+                                                <p className="text-sm text-muted-foreground">
+                                                    {activity.code || "No code"}
+                                                </p>
+                                            </div>
+
+                                            <p className="text-sm text-muted-foreground">
+                                                {activity.description || "No description provided."}
+                                            </p>
+
+                                            <div className="grid gap-3 sm:grid-cols-2">
+                                                <MiniDetail
+                                                    label="Points"
+                                                    value={String(activity.points)}
+                                                />
+                                                <MiniDetail
+                                                    label="Status"
+                                                    value={activity.isActive ? "Active" : "Inactive"}
+                                                />
+                                                <MiniDetail
+                                                    label="Scope"
+                                                    value={
+                                                        activity.allowedDepartments.length === 0
+                                                            ? "All departments"
+                                                            : department?.name || "Assigned department"
+                                                    }
+                                                />
+                                                <MiniDetail
+                                                    label="Email"
+                                                    value={
+                                                        activity.requiresEmail
+                                                            ? "Required"
+                                                            : "Not required"
+                                                    }
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-wrap items-center gap-2 pt-1">
+                                                <ActionIconButton
+                                                    label="Edit activity"
+                                                    title="Edit"
+                                                    onClick={() => handleOpenEdit(activity)}
+                                                    icon={<Pencil className="h-4 w-4" />}
+                                                    tone="blue"
+                                                />
+                                                <ActionIconButton
+                                                    label="View QR code"
+                                                    title="View QR"
+                                                    onClick={() => handleOpenQr(activity)}
+                                                    icon={<QrCode className="h-4 w-4" />}
+                                                    tone="violet"
+                                                />
+                                                <ActionIconButton
+                                                    label={
+                                                        activity.isActive
+                                                            ? "Deactivate activity"
+                                                            : "Activate activity"
+                                                    }
+                                                    title={activity.isActive ? "Deactivate" : "Activate"}
+                                                    onClick={() => handleToggleActivityStatus(activity)}
+                                                    icon={<Power className="h-4 w-4" />}
+                                                    tone={activity.isActive ? "red" : "green"}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            })}
                         </div>
                     )}
                 </SurfaceCard>
@@ -1075,6 +1212,17 @@ function ActivityTypeBadge({ type }: { type: ActivityType | "" }) {
         <span className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
             {formatActivityType(type)}
         </span>
+    )
+}
+
+function MiniDetail({ label, value }: { label: string; value: string }) {
+    return (
+        <div className="rounded-[var(--radius-input)] border bg-[var(--surface)] px-3 py-3">
+            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                {label}
+            </p>
+            <p className="mt-1 text-sm font-semibold leading-5">{value}</p>
+        </div>
     )
 }
 

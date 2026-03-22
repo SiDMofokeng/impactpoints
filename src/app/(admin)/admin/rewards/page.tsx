@@ -11,7 +11,9 @@ import {
 } from "firebase/firestore"
 import {
     Gift,
+    Pencil,
     Plus,
+    Power,
     Search,
     ShieldCheck,
     Ticket,
@@ -334,10 +336,25 @@ export default function AdminRewardsPage() {
     return (
         <RequireRole allowedRoles={["super_admin"]}>
             <div className="space-y-6">
+                <section className="rounded-[var(--radius-card)] border bg-gradient-to-r from-blue-600 via-sky-500 to-lime-500 px-6 py-8 text-white shadow-[var(--shadow-card)] md:px-8">
+                    <div className="max-w-3xl space-y-3">
+                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/80">
+                            Reward management
+                        </p>
+                        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+                            Reward Catalog
+                        </h1>
+                        <p className="max-w-2xl text-sm leading-6 text-white/90 md:text-base">
+                            Create and manage the rewards employees can unlock with their points,
+                            including vouchers, meals, airtime, gifts, experiences, and more.
+                        </p>
+                    </div>
+                </section>
+
                 <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                     <div className="space-y-2">
                         <p className="text-sm font-medium text-muted-foreground">Rewards</p>
-                        <h1 className="text-3xl font-bold tracking-tight">Reward Catalog</h1>
+                        <h2 className="text-3xl font-bold tracking-tight">Reward Catalog</h2>
                         <p className="max-w-3xl text-sm text-muted-foreground md:text-base">
                             Create the real rewards employees can claim after reaching the
                             required number of points.
@@ -493,20 +510,24 @@ export default function AdminRewardsPage() {
 
                                             <td className="px-5 py-4 md:px-6">
                                                 <div className="flex flex-wrap items-center justify-end gap-2">
-                                                    <button
-                                                        type="button"
+                                                    <ActionIconButton
+                                                        label="Edit reward"
+                                                        title="Edit"
                                                         onClick={() => handleOpenEdit(reward)}
-                                                        className="cursor-pointer rounded-xl border bg-white px-3 py-2 text-xs font-medium transition hover:bg-slate-100"
-                                                    >
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        type="button"
+                                                        icon={<Pencil className="h-4 w-4" />}
+                                                        tone="blue"
+                                                    />
+                                                    <ActionIconButton
+                                                        label={
+                                                            reward.isActive
+                                                                ? "Deactivate reward"
+                                                                : "Activate reward"
+                                                        }
+                                                        title={reward.isActive ? "Deactivate" : "Activate"}
                                                         onClick={() => handleToggleRewardStatus(reward)}
-                                                        className="cursor-pointer rounded-xl border bg-white px-3 py-2 text-xs font-medium transition hover:bg-slate-100"
-                                                    >
-                                                        {reward.isActive ? "Deactivate" : "Activate"}
-                                                    </button>
+                                                        icon={<Power className="h-4 w-4" />}
+                                                        tone={reward.isActive ? "red" : "green"}
+                                                    />
                                                 </div>
                                             </td>
                                         </tr>
@@ -875,6 +896,39 @@ function RewardTypeBadge({ type }: { type: RewardType | "" }) {
         <span className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
             {formatRewardType(type)}
         </span>
+    )
+}
+
+function ActionIconButton({
+    label,
+    title,
+    onClick,
+    icon,
+    tone,
+}: {
+    label: string
+    title: string
+    onClick: () => void
+    icon: React.ReactNode
+    tone: "blue" | "green" | "red"
+}) {
+    const classes =
+        tone === "blue"
+            ? "border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100"
+            : tone === "green"
+                ? "border-green-200 bg-green-50 text-green-700 hover:bg-green-100"
+                : "border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+
+    return (
+        <button
+            type="button"
+            aria-label={label}
+            title={title}
+            onClick={onClick}
+            className={`inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border transition ${classes}`}
+        >
+            {icon}
+        </button>
     )
 }
 

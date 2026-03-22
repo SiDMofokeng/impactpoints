@@ -113,13 +113,6 @@ export default function EmployeeActivityPage() {
     return (
         <RequireRole allowedRoles={["employee"]}>
             <div className="space-y-6">
-                <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">My activity</p>
-                    <h1 className="text-3xl font-bold tracking-tight">Scan History</h1>
-                    <p className="text-muted-foreground">
-                        Review your recent activity scans, points earned, and participation history.
-                    </p>
-                </div>
 
                 <section className="rounded-[var(--radius-card)] border bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 px-6 py-8 text-white shadow-[var(--shadow-card)] md:px-8">
                     <div className="max-w-3xl space-y-3">
