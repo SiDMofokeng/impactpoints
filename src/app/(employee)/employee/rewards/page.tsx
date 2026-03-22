@@ -68,32 +68,41 @@ export default function EmployeeRewardsPage() {
 
             const normalizedEmail = (profile?.email ?? "").toLowerCase()
 
-            const currentUser =
+            const currentUser: WorkspaceUser | null =
                 usersSnap.docs
-                    .map((docSnap) => {
-                        const data = docSnap.data() as Partial<WorkspaceUser>
+                    .map((docSnap): WorkspaceUser => {
+                        const data = docSnap.data() as Record<string, unknown>
+
+                        const role: WorkspaceUser["role"] =
+                            data.role === "super_admin" ||
+                                data.role === "department_head" ||
+                                data.role === "employee"
+                                ? data.role
+                                : ""
+
+                        const status: WorkspaceUser["status"] =
+                            data.status === "active" ||
+                                data.status === "inactive" ||
+                                data.status === "suspended"
+                                ? data.status
+                                : ""
 
                         return {
                             id: docSnap.id,
-                            name: data.name ?? "",
-                            email: data.email ?? "",
-                            role:
-                                data.role === "super_admin" ||
-                                    data.role === "department_head" ||
-                                    data.role === "employee"
-                                    ? data.role
+                            name: typeof data.name === "string" ? data.name : "",
+                            email: typeof data.email === "string" ? data.email : "",
+                            role,
+                            departmentId:
+                                typeof data.departmentId === "string" ? data.departmentId : "",
+                            departmentName:
+                                typeof data.departmentName === "string"
+                                    ? data.departmentName
                                     : "",
-                            departmentId: data.departmentId ?? "",
-                            departmentName: data.departmentName ?? "",
-                            status:
-                                data.status === "active" ||
-                                    data.status === "inactive" ||
-                                    data.status === "suspended"
-                                    ? data.status
-                                    : "",
+                            status,
                             totalPoints:
                                 typeof data.totalPoints === "number" ? data.totalPoints : 0,
-                            isDeleted: data.isDeleted ?? false,
+                            isDeleted:
+                                typeof data.isDeleted === "boolean" ? data.isDeleted : false,
                         }
                     })
                     .find(
@@ -103,28 +112,34 @@ export default function EmployeeRewardsPage() {
                     ) ?? null
 
             const rewardRows: RewardRecord[] = rewardsSnap.docs
-                .map((docSnap) => {
-                    const data = docSnap.data() as Partial<RewardRecord>
+                .map((docSnap): RewardRecord => {
+                    const data = docSnap.data() as Record<string, unknown>
+
+                    const rewardType: RewardRecord["type"] =
+                        data.type === "voucher" ||
+                            data.type === "meal" ||
+                            data.type === "time_off" ||
+                            data.type === "airtime" ||
+                            data.type === "gift" ||
+                            data.type === "cash_bonus" ||
+                            data.type === "experience" ||
+                            data.type === "other"
+                            ? data.type
+                            : ""
 
                     return {
                         id: docSnap.id,
-                        title: data.title ?? "",
-                        description: data.description ?? "",
-                        type:
-                            data.type === "voucher" ||
-                                data.type === "meal" ||
-                                data.type === "time_off" ||
-                                data.type === "airtime" ||
-                                data.type === "gift" ||
-                                data.type === "cash_bonus" ||
-                                data.type === "experience" ||
-                                data.type === "other"
-                                ? data.type
-                                : "",
+                        title: typeof data.title === "string" ? data.title : "",
+                        description:
+                            typeof data.description === "string" ? data.description : "",
+                        type: rewardType,
                         pointsRequired:
-                            typeof data.pointsRequired === "number" ? data.pointsRequired : 0,
+                            typeof data.pointsRequired === "number"
+                                ? data.pointsRequired
+                                : 0,
                         stock: typeof data.stock === "number" ? data.stock : 0,
-                        isActive: data.isActive ?? true,
+                        isActive:
+                            typeof data.isActive === "boolean" ? data.isActive : true,
                     }
                 })
                 .filter((reward) => reward.isActive)
