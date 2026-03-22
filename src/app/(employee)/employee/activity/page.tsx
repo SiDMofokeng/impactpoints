@@ -46,9 +46,18 @@ export default function EmployeeActivityPage() {
             const scansSnap = await getDocs(collection(db, "activity_scans"))
             const normalizedEmail = (profile?.email ?? "").toLowerCase()
 
-            const rows: ActivityScanRecord[] = scansSnap.docs
-                .map((docSnap) => {
+            const rows = scansSnap.docs
+                .map((docSnap): ActivityScanRecord => {
                     const data = docSnap.data() as Record<string, unknown>
+
+                    const activityType: ActivityScanRecord["activityType"] =
+                        data.activityType === "check_in" ||
+                            data.activityType === "check_out" ||
+                            data.activityType === "meeting" ||
+                            data.activityType === "training" ||
+                            data.activityType === "general"
+                            ? data.activityType
+                            : ""
 
                     return {
                         id: docSnap.id,
@@ -56,14 +65,7 @@ export default function EmployeeActivityPage() {
                         activityCode: typeof data.activityCode === "string" ? data.activityCode : "",
                         activityTitle:
                             typeof data.activityTitle === "string" ? data.activityTitle : "",
-                        activityType:
-                            data.activityType === "check_in" ||
-                                data.activityType === "check_out" ||
-                                data.activityType === "meeting" ||
-                                data.activityType === "training" ||
-                                data.activityType === "general"
-                                ? data.activityType
-                                : "",
+                        activityType,
                         notes: typeof data.notes === "string" ? data.notes : "",
                         pointsAwarded:
                             typeof data.pointsAwarded === "number" ? data.pointsAwarded : 0,
@@ -273,7 +275,6 @@ function formatScanDate(
 ) {
     const seconds = scannedAt?.seconds
     if (!seconds) return "Unknown date"
-
     const date = new Date(seconds * 1000)
     return date.toLocaleString()
 }
