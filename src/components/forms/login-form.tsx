@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
@@ -96,62 +97,106 @@ export default function LoginForm() {
     }
 
     return (
-        <section className="flex min-h-screen flex-col justify-center gap-6 px-4 py-10">
-            <div className="space-y-2 text-center">
-                <p className="text-sm font-medium text-muted-foreground">Welcome to</p>
-                <h1 className="text-3xl font-bold tracking-tight">Impact Points</h1>
-                <p className="text-sm text-muted-foreground">
-                    Sign in to access your rewards dashboard.
-                </p>
+        <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#fff5f6] px-4 py-10">
+            <div className="absolute inset-0">
+                <div className="absolute left-0 top-0 h-[420px] w-[420px] rounded-full bg-[#d71920]/12 blur-3xl" />
+                <div className="absolute bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-[#a90f18]/10 blur-3xl" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(215,25,32,0.08),_transparent_45%)]" />
             </div>
 
-            <SurfaceCard className="mx-auto w-full max-w-sm p-6">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium" htmlFor="email">
-                            Email
-                        </label>
-                        <Input
-                            id="email"
-                            type="email"
-                            placeholder="you@company.com"
-                            {...register("email")}
-                        />
-                        {errors.email ? (
-                            <p className="text-sm text-red-500">{errors.email.message}</p>
-                        ) : null}
+            <div className="relative z-10 w-full max-w-md space-y-6">
+                <div className="space-y-4 text-center">
+                    <div className="mx-auto flex w-full justify-center">
+                        <div className="rounded-3xl border border-white/70 bg-white px-6 py-5 shadow-[0_20px_60px_rgba(215,25,32,0.12)]">
+                            <Image
+                                src="/logo_kingprice.webp"
+                                alt="King Price"
+                                width={220}
+                                height={70}
+                                priority
+                                className="h-auto w-[180px] sm:w-[220px]"
+                            />
+                        </div>
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium" htmlFor="password">
-                            Password
-                        </label>
-                        <Input
-                            id="password"
-                            type="password"
-                            placeholder="••••••••"
-                            {...register("password")}
-                        />
-                        {errors.password ? (
-                            <p className="text-sm text-red-500">{errors.password.message}</p>
-                        ) : null}
-                    </div>
 
-                    <Button
-                        type="submit"
-                        className="w-full rounded-[var(--radius-button)] bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting ? "Signing in..." : "Sign in"}
-                    </Button>
-
-                    {submitMessage ? (
-                        <p className="text-center text-sm text-muted-foreground">
-                            {submitMessage}
+                        <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+                            Sign in to your dashboard
+                        </h2>
+                        <p className="text-sm leading-6 text-slate-600">
+                            Access your King Price rewards dashboard securely and continue
+                            managing your activity, rewards, and engagement.
                         </p>
-                    ) : null}
-                </form>
-            </SurfaceCard>
+                    </div>
+                </div>
+
+                <SurfaceCard className="rounded-[28px] border border-white/80 bg-white/95 p-6 shadow-[0_20px_70px_rgba(15,23,42,0.10)] backdrop-blur">
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="space-y-5"
+                        noValidate
+                    >
+                        <div className="space-y-2">
+                            <label
+                                className="text-sm font-semibold text-slate-800"
+                                htmlFor="email"
+                            >
+                                Email
+                            </label>
+                            <Input
+                                id="email"
+                                type="email"
+                                placeholder="you@company.com"
+                                {...register("email")}
+                                className="h-12 rounded-2xl border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus-visible:ring-[#d71920]"
+                            />
+                            {errors.email ? (
+                                <p className="text-sm text-red-600">
+                                    {errors.email.message}
+                                </p>
+                            ) : null}
+                        </div>
+
+                        <div className="space-y-2">
+                            <label
+                                className="text-sm font-semibold text-slate-800"
+                                htmlFor="password"
+                            >
+                                Password
+                            </label>
+                            <Input
+                                id="password"
+                                type="password"
+                                placeholder="••••••••"
+                                {...register("password")}
+                                className="h-12 rounded-2xl border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus-visible:ring-[#d71920]"
+                            />
+                            {errors.password ? (
+                                <p className="text-sm text-red-600">
+                                    {errors.password.message}
+                                </p>
+                            ) : null}
+                        </div>
+
+                        <Button
+                            type="submit"
+                            className="h-12 w-full rounded-2xl bg-[#d71920] text-white shadow-[0_10px_30px_rgba(215,25,32,0.28)] transition hover:bg-[#b8141a]"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? "Signing in..." : "Sign in"}
+                        </Button>
+
+                        {submitMessage ? (
+                            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                <p className="text-center text-sm text-slate-600">
+                                    {submitMessage}
+                                </p>
+                            </div>
+                        ) : null}
+                    </form>
+                </SurfaceCard>
+            </div>
         </section>
     )
 }

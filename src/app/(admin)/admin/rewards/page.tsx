@@ -336,7 +336,7 @@ export default function AdminRewardsPage() {
     return (
         <RequireRole allowedRoles={["super_admin"]}>
             <div className="space-y-6">
-                <section className="rounded-[var(--radius-card)] border bg-gradient-to-r from-blue-600 via-sky-500 to-lime-500 px-6 py-8 text-white shadow-[var(--shadow-card)] md:px-8">
+                <section className="rounded-[var(--radius-card)] border bg-[linear-gradient(135deg,#d61f2c_0%,#d61f2c_48%,#d61f2c_100%)] px-6 py-8 text-white shadow-[var(--shadow-card)] md:px-8">
                     <div className="max-w-3xl space-y-3">
                         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/80">
                             Reward management

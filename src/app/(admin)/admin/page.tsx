@@ -290,7 +290,7 @@ export default function AdminPage() {
     return (
         <RequireRole allowedRoles={["super_admin"]}>
             <div className="space-y-6">
-                <section className="rounded-[var(--radius-card)] bg-[linear-gradient(135deg,#2563eb_0%,#1d4ed8_48%,#84cc16_100%)] px-6 py-7 text-white shadow-[var(--shadow-card)]">
+                <section className="rounded-[var(--radius-card)] bg-[linear-gradient(135deg,#d61f2c_0%,#d61f2c_48%,#d61f2c_100%)] px-6 py-7 text-white shadow-[var(--shadow-card)]">
                     <div className="max-w-3xl space-y-3">
                         <p className="text-xs font-medium uppercase tracking-[0.18em] text-white/80">
                             Company overview

@@ -427,7 +427,7 @@ export default function HeadActivitiesPage() {
     return (
         <RequireRole allowedRoles={["department_head"]}>
             <div className="space-y-6">
-                <section className="rounded-[var(--radius-card)] bg-[linear-gradient(135deg,#2563eb_0%,#1d4ed8_48%,#84cc16_100%)] px-6 py-7 text-white shadow-[var(--shadow-card)]">
+                <section className="rounded-[var(--radius-card)] bg-[linear-gradient(135deg,#d61f2c_0%,#d61f2c_48%,#d61f2c_100%)] px-6 py-7 text-white shadow-[var(--shadow-card)]">
                     <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                         <div className="max-w-3xl space-y-3">
                             <p className="text-xs font-medium uppercase tracking-[0.18em] text-white/80">
@@ -546,8 +546,8 @@ export default function HeadActivitiesPage() {
                                     type="button"
                                     onClick={() => setViewMode("table")}
                                     className={`inline-flex h-full cursor-pointer items-center gap-2 rounded-[10px] px-3 text-sm font-medium transition ${viewMode === "table"
-                                            ? "bg-[var(--primary)] text-white"
-                                            : "text-slate-700 hover:bg-slate-100"
+                                        ? "bg-[var(--primary)] text-white"
+                                        : "text-slate-700 hover:bg-slate-100"
                                         }`}
                                 >
                                     <List className="h-4 w-4" />
@@ -558,8 +558,8 @@ export default function HeadActivitiesPage() {
                                     type="button"
                                     onClick={() => setViewMode("cards")}
                                     className={`inline-flex h-full cursor-pointer items-center gap-2 rounded-[10px] px-3 text-sm font-medium transition ${viewMode === "cards"
-                                            ? "bg-[var(--primary)] text-white"
-                                            : "text-slate-700 hover:bg-slate-100"
+                                        ? "bg-[var(--primary)] text-white"
+                                        : "text-slate-700 hover:bg-slate-100"
                                         }`}
                                 >
                                     <LayoutGrid className="h-4 w-4" />

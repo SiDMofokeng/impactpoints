@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { signOut } from "firebase/auth"
@@ -88,13 +89,16 @@ export default function AppShell({
                 <aside className="hidden h-screen w-[280px] shrink-0 border-r bg-white lg:flex lg:flex-col">
                     <div className="border-b px-6 py-5">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--primary)] text-sm font-bold text-white shadow-[var(--shadow-card)]">
-                                {initials}
-                            </div>
-                            <div>
-                                <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                                    Impact Points
-                                </p>
+
+                            <div className="rounded-3xl border border-white/70 bg-white px-6 py-5 shadow-[0_20px_60px_rgba(215,25,32,0.12)]">
+                                <Image
+                                    src="/logo_kingprice.webp"
+                                    alt="King Price"
+                                    width={220}
+                                    height={70}
+                                    priority
+                                    className="h-auto w-[180px] sm:w-[220px]"
+                                />
                             </div>
                         </div>
                     </div>
