@@ -224,23 +224,14 @@ export default function EmployeeOverviewPage() {
     return (
         <RequireRole allowedRoles={["employee"]}>
             <div className="space-y-6">
-                <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">My progress</p>
-                    <h1 className="text-3xl font-bold tracking-tight">
-                        Welcome back, {profileLoading ? "..." : (profile?.name ?? "Employee")}
-                    </h1>
-                    <p className="text-muted-foreground">
-                        Track your points, rewards, scans, and achievements in one place.
-                    </p>
-                </div>
 
-                <section className="rounded-[var(--radius-card)] border bg-gradient-to-r from-blue-600 via-sky-500 to-lime-500 px-6 py-8 text-white shadow-[var(--shadow-card)] md:px-8">
+                <section className="rounded-[var(--radius-card)] border bg-[linear-gradient(135deg,#d61f2c_0%,#d61f2c_48%,#d61f2c_100%)] px-6 py-8 text-white shadow-[var(--shadow-card)] md:px-8">
                     <div className="max-w-3xl space-y-3">
                         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/80">
                             My rewards dashboard
                         </p>
                         <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-                            Keep earning. Keep unlocking.
+                            Welcome back, {profileLoading ? "..." : (profile?.name ?? "Employee")}
                         </h2>
                         <p className="max-w-2xl text-sm leading-6 text-white/90 md:text-base">
                             Scan activities, grow your points, and work your way toward real
