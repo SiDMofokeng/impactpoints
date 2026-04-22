@@ -444,13 +444,6 @@ export default function EmployeeScanPage() {
                                                         QR code
                                                     </button>
 
-                                                    <Link
-                                                        href={`/scan/${activity.id}`}
-                                                        className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-button)] bg-[var(--primary)] px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
-                                                    >
-                                                        Open scan
-                                                        <ArrowUpRight className="h-4 w-4" />
-                                                    </Link>
                                                 </div>
                                             </td>
                                         </tr>
